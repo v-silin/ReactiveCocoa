@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.description  = <<-DESC
                    ReactiveCocoa (RAC) is a Cocoa framework built on top of ReactiveSwift. It provides APIs for using ReactiveSwift with Apple's Cocoa frameworks.
                    DESC
-  s.homepage     = "https://github.com/v-silin/ReactiveCocoa."
+  s.homepage     = "https://github.com/v-silin/ReactiveCocoa"
   s.license      = { :type => "MIT", :file => "LICENSE.md" }
   s.author       = "ReactiveCocoa"
   
