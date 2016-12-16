@@ -21,7 +21,7 @@ extension Reactive where Base: UIBarButtonItem {
 			associatedAction
 				.swap(newValue.map { action in
 						let disposable = isEnabled <~ action.isEnabled
-						return (action, disposable)
+						return (action, disposable!)
 				})?
 				.disposable?.dispose()
 		}
