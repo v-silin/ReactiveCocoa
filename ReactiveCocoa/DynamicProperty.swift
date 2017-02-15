@@ -9,27 +9,27 @@ import enum Result.NoError
 /// unless KVC/KVO is required by the API you're using (for example,
 /// `NSOperation`).
 public final class DynamicProperty<Value>: MutablePropertyProtocol {
-	
+
 	private weak var object: NSObject?
 	private let keyPath: String
-	
+
 	/// The current value of the property, as read and written using Key-Value
 	/// Coding.
 	public var value: Value? {
 		get {
 			return object?.value(forKeyPath: keyPath) as! Value
 		}
-		
+
 		set(newValue) {
-			self.setValue(value: newValue)
+            self.setValue(value: newValue)
 		}
 	}
-	
+
 	/// The lifetime of the property.
 	public var lifetime: Lifetime {
 		return object?.reactive.lifetime ?? .empty
 	}
-	
+
 	/// A producer that will create a Key-Value Observer for the given object,
 	/// send its initial value then all changes over time, and then complete
 	/// when the observed object has deallocated.
@@ -40,21 +40,23 @@ public final class DynamicProperty<Value>: MutablePropertyProtocol {
 		return (object.map { $0.reactive.values(forKeyPath: keyPath) } ?? .empty)
 			.map { $0 as! Value }
 	}
-	
+
 	public private(set) lazy var signal: Signal<Value?, NoError> = {
 		var signal: Signal<DynamicProperty.Value, NoError>!
 		self.producer.startWithSignal { innerSignal, _ in signal = innerSignal }
 		return signal
-	}()
-	
-	public func setValue(value: Optional<Value>, start: (() -> ())? = nil, end: (() -> ())? = nil) -> Optional<Value> {
-		start?()
-		object?.setValue(value, forKeyPath: keyPath)
-		end?()
-		
-		return value
-	}
-	
+    }()
+    
+    public func setValue(value: Optional<Value>, start: (() -> ())? = nil, end: (() -> ())? = nil) -> Optional<Value> {
+        start?()
+        
+        object?.setValue(value, forKeyPath: keyPath)
+        
+        end?()
+        
+        return value
+    }
+
 	/// Initializes a property that will observe and set the given key path of
 	/// the given object. The generic type `Value` can be any Swift type, and will
 	/// be bridged to Objective-C via `Any`.
@@ -67,7 +69,7 @@ public final class DynamicProperty<Value>: MutablePropertyProtocol {
 	public init(object: NSObject, keyPath: String) {
 		self.object = object
 		self.keyPath = keyPath
-		
+
 		/// A DynamicProperty will stay alive as long as its object is alive.
 		/// This is made possible by strong reference cycles.
 		_ = object.reactive.lifetime.ended.observeCompleted { _ = self }

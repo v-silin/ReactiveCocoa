@@ -18,7 +18,7 @@ extension Reactive where Base: UIControl {
 	///	  - disposable: An outside disposable that will be bound to the scope of
 	///					the given `action`.
 	internal func setAction(_ action: CocoaAction<Base>?, for controlEvents: UIControlEvents, disposable: Disposable? = nil) {
-		associatedAction.modify { associatedAction in
+		associatedAction.modify({ associatedAction in
 			associatedAction?.disposable.dispose()
 
 			if let action = action {
@@ -35,7 +35,7 @@ extension Reactive where Base: UIControl {
 			} else {
 				associatedAction = nil
 			}
-		}
+		})
 	}
 
 	/// Create a signal which sends a `value` event for each of the specified
